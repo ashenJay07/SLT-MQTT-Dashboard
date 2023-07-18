@@ -20,6 +20,7 @@ export default function Home() {
                     type="email"
                     className="form-control"
                     id="exampleInputEmail1"
+                    placeholder="hostname or IP address"
                     aria-describedby="emailHelp"
                   />
                 </div>
@@ -29,6 +30,7 @@ export default function Home() {
                     type="email"
                     className="form-control"
                     id="exampleInputEmail1"
+                    placeholder="port number"
                     aria-describedby="emailHelp"
                   />
                 </div>
@@ -41,6 +43,7 @@ export default function Home() {
                     type="email"
                     className="form-control"
                     id="exampleInputEmail1"
+                    placeholder="username"
                     aria-describedby="emailHelp"
                   />
                 </div>
@@ -49,6 +52,7 @@ export default function Home() {
                     type="email"
                     className="form-control"
                     id="exampleInputEmail1"
+                    placeholder="password"
                     aria-describedby="emailHelp"
                   />
                 </div>
