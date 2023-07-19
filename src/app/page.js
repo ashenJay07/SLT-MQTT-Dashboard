@@ -3,31 +3,132 @@
 import { useState } from "react";
 import KeywordField from "../components/keywordField";
 
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 export default function Home() {
+  const [connectionStatus, setConnectionStatus] = useState(false);
   const [protocol, setProtocol] = useState("");
-  const [hostName, setHostName] = useState("");
+  const [host, setHost] = useState("");
   const [port, setPort] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [keywords, setKeywords] = useState([]);
+  const [publishTopic, setPublishTopic] = useState("");
+  const [publishMessage, setPublishMessage] = useState("");
 
   const [mqttService, setMqttService] = useState(null);
+
+  const notify = (msg) => {};
 
   const handleFormSubmission = (e) => {
     e.preventDefault();
   };
 
   const connectToMQTT = async () => {
-    const hostAddress = `${hostName}:${port}`;
-    console.log(hostAddress);
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_MQTT_BACKEND_URL}/api/mqtt/connect`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            protocol,
+            host,
+            port,
+            username,
+            password,
+          }),
+        }
+      );
+
+      const result = await response.json();
+
+      if (result) {
+        setConnectionStatus(result);
+        notify(
+          toast.success("Connected to MQTT broker", {
+            position: "top-center",
+            autoClose: 1500,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "light",
+          })
+        );
+        console.log("Connection Successful");
+      }
+    } catch (error) {}
   };
 
-  const handleDisconnection = async () => {};
+  const handleDisconnection = async () => {
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_MQTT_BACKEND_URL}/api/mqtt/disconnect`,
+        { method: "POST" }
+      );
 
-  console.log(protocol, hostName, port, username, password, keywords);
+      const result = await response.json();
+      if (!result) {
+        notify(
+          toast.error("Disconnecting from MQTT broker", {
+            position: "top-center",
+            autoClose: 1500,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "light",
+          })
+        );
+      }
+      setConnectionStatus(result);
+    } catch (error) {}
+  };
+
+  const handlePublishMessage = async () => {
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_MQTT_BACKEND_URL}/api/mqtt/publish`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            topic: publishTopic,
+            message: publishMessage,
+          }),
+        }
+      );
+
+      if (response.ok) {
+        notify(
+          toast.success("Message published successfully", {
+            position: "top-center",
+            autoClose: 1500,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "light",
+          })
+        );
+      }
+    } catch (error) {}
+  };
+
+  console.log(publishTopic, publishMessage);
 
   return (
     <>
+      <ToastContainer />
       <div className="container-fluid">
         <div className="container pt-4">
           <div className="text-center">
@@ -35,25 +136,38 @@ export default function Home() {
           </div>
 
           <div>
-            <div className="col-7 pt-5 mx-auto">
+            <div className="col-12 col-sm-7 pt-5 mx-auto d-flex justify-content-end">
+              <div className="d-flex align-items-center">
+                Connection Status:
+                <span
+                  className={`mx-2 ${
+                    connectionStatus ? "bg-success" : "bg-danger"
+                  }`}
+                  style={{
+                    borderRadius: "50%",
+                    width: 15,
+                    height: 15,
+                    display: "inline-block",
+                  }}
+                ></span>
+              </div>
+            </div>
+            <div className="col-12 col-sm-7 pt-3 mx-auto">
               <form onSubmit={handleFormSubmission}>
                 <div className="mb-3">
-                  <label htmlFor="host" className="form-label">
-                    Protocol
-                  </label>
+                  <label className="form-label">Protocol</label>
                   <select
-                    class="form-select"
+                    className="form-select"
                     aria-label="Default select example"
                     onChange={(e) => setProtocol(e.target.value)}
                   >
-                    <option value="mqtt://" selected>
-                      mqtt://
-                    </option>
+                    <option>Select a protocol</option>
+                    <option value="mqtt://">mqtt://</option>
                     <option value="mqtts://">mqtts://</option>
                   </select>
                 </div>
                 <div className="mb-3">
-                  <label htmlFor="host" className="form-label">
+                  <label className="form-label">
                     Hostname or IP Address and Port Number
                   </label>
                   <input
@@ -62,7 +176,7 @@ export default function Home() {
                     name="host"
                     id="host"
                     placeholder="hostname or IP address"
-                    onChange={(e) => setHostName(e.target.value)}
+                    onChange={(e) => setHost(e.target.value)}
                   />
                 </div>
 
@@ -104,7 +218,7 @@ export default function Home() {
                 <div>
                   <button
                     type="submit"
-                    className="btn btn-primary mr-2"
+                    className="btn btn-success mr-2"
                     onClick={connectToMQTT}
                   >
                     Connect
@@ -120,23 +234,26 @@ export default function Home() {
               </form>
             </div>
 
-            <div className="col-7 mx-auto pt-3">
+            <div className="col-12 col-sm-7 mx-auto pt-3">
               <hr />
             </div>
 
-            <div className="col-7 pt-3 mx-auto">
-              <form>
+            <div className="col-12 col-sm-7 pt-3 mx-auto">
+              <form onSubmit={handleFormSubmission}>
                 <div className="mb-3">
-                  <label htmlFor="exampleInputEmail1" className="form-label">
-                    Hostname or IP Address and Port Number
+                  <label className="form-label">
+                    Publish Topic and Message
                   </label>
-                  <input
-                    type="email"
-                    className="form-control"
-                    id="exampleInputEmail1"
-                    placeholder="Topic"
-                    aria-describedby="emailHelp"
-                  />
+                  <div className="form-floating">
+                    <input
+                      type="text"
+                      className="form-control"
+                      id="exampleInputEmail1s"
+                      placeholder="Topic"
+                      onChange={(e) => setPublishTopic(e.target.value)}
+                    />
+                    <label htmlFor="exampleInputEmail1s">Topic</label>
+                  </div>
                 </div>
 
                 <div className="mb-3 form-floating">
@@ -144,23 +261,28 @@ export default function Home() {
                     className="form-control"
                     placeholder="Message"
                     id="floatingTextarea2"
+                    onChange={(e) => setPublishMessage(e.target.value)}
                     style={{ minHeight: 100 }}
                     defaultValue={""}
                   />
                   <label htmlFor="floatingTextarea2">Message</label>
                 </div>
 
-                <button type="submit" className="btn btn-primary">
+                <button
+                  type="submit"
+                  className="btn btn-primary"
+                  onClick={handlePublishMessage}
+                >
                   Publish
                 </button>
               </form>
             </div>
 
-            <div className="col-7 mx-auto pt-3">
+            <div className="col-12 col-sm-7 mx-auto pt-3">
               <hr />
             </div>
 
-            <div className="col-7 mx-auto pt-3 pb-5">
+            <div className="col-12 col-sm-7 mx-auto pt-3 pb-5">
               <div className="mb-3">
                 <textarea
                   className="form-control"
