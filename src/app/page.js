@@ -4,6 +4,7 @@ import { useState } from "react";
 import KeywordField from "../components/keywordField";
 
 export default function Home() {
+  const [protocol, setProtocol] = useState("");
   const [hostName, setHostName] = useState("");
   const [port, setPort] = useState("");
   const [username, setUsername] = useState("");
@@ -16,11 +17,14 @@ export default function Home() {
     e.preventDefault();
   };
 
-  const connectToMQTT = () => {};
+  const connectToMQTT = async () => {
+    const hostAddress = `${hostName}:${port}`;
+    console.log(hostAddress);
+  };
 
-  const handleDisconnection = () => {};
+  const handleDisconnection = async () => {};
 
-  console.log(hostName, port, username, password, keywords);
+  console.log(protocol, hostName, port, username, password, keywords);
 
   return (
     <>
@@ -33,6 +37,21 @@ export default function Home() {
           <div>
             <div className="col-7 pt-5 mx-auto">
               <form onSubmit={handleFormSubmission}>
+                <div className="mb-3">
+                  <label htmlFor="host" className="form-label">
+                    Protocol
+                  </label>
+                  <select
+                    class="form-select"
+                    aria-label="Default select example"
+                    onChange={(e) => setProtocol(e.target.value)}
+                  >
+                    <option value="mqtt://" selected>
+                      mqtt://
+                    </option>
+                    <option value="mqtts://">mqtts://</option>
+                  </select>
+                </div>
                 <div className="mb-3">
                   <label htmlFor="host" className="form-label">
                     Hostname or IP Address and Port Number
