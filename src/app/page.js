@@ -1,6 +1,27 @@
-import KeywordField from "./components/keywordField";
+"use client";
+
+import { useState } from "react";
+import KeywordField from "../components/keywordField";
 
 export default function Home() {
+  const [hostName, setHostName] = useState("");
+  const [port, setPort] = useState("");
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [keywords, setKeywords] = useState([]);
+
+  const [mqttService, setMqttService] = useState(null);
+
+  const handleFormSubmission = (e) => {
+    e.preventDefault();
+  };
+
+  const connectToMQTT = () => {};
+
+  const handleDisconnection = () => {};
+
+  console.log(hostName, port, username, password, keywords);
+
   return (
     <>
       <div className="container-fluid">
@@ -11,59 +32,69 @@ export default function Home() {
 
           <div>
             <div className="col-7 pt-5 mx-auto">
-              <form>
+              <form onSubmit={handleFormSubmission}>
                 <div className="mb-3">
-                  <label htmlFor="exampleInputEmail1" className="form-label">
+                  <label htmlFor="host" className="form-label">
                     Hostname or IP Address and Port Number
                   </label>
                   <input
-                    type="email"
+                    type="text"
                     className="form-control"
-                    id="exampleInputEmail1"
+                    name="host"
+                    id="host"
                     placeholder="hostname or IP address"
-                    aria-describedby="emailHelp"
+                    onChange={(e) => setHostName(e.target.value)}
                   />
                 </div>
 
                 <div className="mb-3">
                   <input
-                    type="email"
+                    type="number"
                     className="form-control"
-                    id="exampleInputEmail1"
+                    name="port"
                     placeholder="port number"
-                    aria-describedby="emailHelp"
+                    onChange={(e) => setPort(e.target.value)}
                   />
                 </div>
 
                 <div className="mb-3">
-                  <label htmlFor="exampleInputEmail1" className="form-label">
+                  <label htmlFor="username" className="form-label">
                     Username and Password
                   </label>
                   <input
-                    type="email"
+                    type="text"
                     className="form-control"
-                    id="exampleInputEmail1"
+                    id="username"
+                    name="username"
                     placeholder="username"
-                    aria-describedby="emailHelp"
+                    onChange={(e) => setUsername(e.target.value)}
                   />
                 </div>
                 <div className="mb-3">
                   <input
-                    type="email"
+                    type="password"
                     className="form-control"
-                    id="exampleInputEmail1"
+                    name="password"
                     placeholder="password"
-                    aria-describedby="emailHelp"
+                    onChange={(e) => setPassword(e.target.value)}
                   />
                 </div>
 
-                <KeywordField />
+                <KeywordField handleKeywords={setKeywords} />
 
                 <div>
-                  <button type="submit" className="btn btn-primary mr-2">
+                  <button
+                    type="submit"
+                    className="btn btn-primary mr-2"
+                    onClick={connectToMQTT}
+                  >
                     Connect
                   </button>
-                  <button type="submit" className="btn btn-danger mx-2">
+                  <button
+                    type="submit"
+                    className="btn btn-danger mx-2"
+                    onClick={handleDisconnection}
+                  >
                     Disconnet
                   </button>
                 </div>
@@ -116,6 +147,7 @@ export default function Home() {
                   className="form-control"
                   id="floatingTextarea2"
                   style={{ height: 250, overflow: "auto", resize: "none" }}
+                  readOnly
                 />
               </div>
             </div>

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-const KeywordField = () => {
+const KeywordField = ({ handleKeywords }) => {
   const [inputValue, setInputValue] = useState("");
   const [keywords, setKeywords] = useState([]);
 
@@ -11,7 +11,9 @@ const KeywordField = () => {
       event.preventDefault();
       const keyword = inputValue.trim();
       if (keyword !== "") {
-        setKeywords([...keywords, keyword]);
+        const updatedKeywords = [...keywords, keyword];
+        setKeywords(updatedKeywords);
+        handleKeywords(updatedKeywords);
         setInputValue("");
       }
     }
@@ -20,14 +22,14 @@ const KeywordField = () => {
   return (
     <>
       <div className="mb-3">
-        <label htmlFor="exampleInputEmail1" className="form-label">
+        <label htmlFor="keyword" className="form-label">
           Subscription Topics
         </label>
         <input
           type="text"
           value={inputValue}
           className="form-control"
-          placeholder="Type keywords and press Enter"
+          placeholder="Type keyword(s) and press Enter"
           onChange={(event) => setInputValue(event.target.value)}
           onKeyDown={handleKeyDown}
         />
