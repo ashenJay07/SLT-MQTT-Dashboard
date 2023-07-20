@@ -8,6 +8,7 @@ import "react-toastify/dist/ReactToastify.css";
 
 export default function Home() {
   const [connectionStatus, setConnectionStatus] = useState(false);
+  const [clientId, setClientId] = useState(null);
   const [protocol, setProtocol] = useState("");
   const [host, setHost] = useState("");
   const [port, setPort] = useState("");
@@ -21,59 +22,84 @@ export default function Home() {
 
   const notify = (msg) => {};
 
+  const generateRandomNumericString = (length) => {
+    const characters = "0123456789@#$%&";
+    let result = "";
+    for (let i = 0; i < length; i++) {
+      const randomIndex = Math.floor(Math.random() * characters.length);
+      result += characters.charAt(randomIndex);
+    }
+    return result;
+  };
+
   const handleFormSubmission = (e) => {
     e.preventDefault();
   };
 
   const connectToMQTT = async () => {
-    try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_MQTT_BACKEND_URL}/api/mqtt/connect`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            protocol,
-            host,
-            port,
-            username,
-            password,
-          }),
-        }
-      );
+    if (!clientId) {
+      const generatedClientId = "mqttClient" + generateRandomNumericString(10);
 
-      const result = await response.json();
-
-      if (result) {
-        setConnectionStatus(result);
-        notify(
-          toast.success("Connected to MQTT broker", {
-            position: "top-center",
-            autoClose: 1500,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "light",
-          })
+      try {
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_MQTT_BACKEND_URL}/api/mqtt/connect`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              clientId: generatedClientId,
+              protocol,
+              host,
+              port,
+              username,
+              password,
+            }),
+          }
         );
-        console.log("Connection Successful");
-      }
-    } catch (error) {}
+
+        const result = await response.json();
+
+        if (result) {
+          setConnectionStatus(result);
+          setClientId(generatedClientId);
+          notify(
+            toast.success("Connected to MQTT broker", {
+              position: "top-center",
+              autoClose: 1500,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+              theme: "light",
+            })
+          );
+          console.log("Connection Successful");
+        }
+      } catch (error) {}
+    }
   };
 
   const handleDisconnection = async () => {
     try {
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_MQTT_BACKEND_URL}/api/mqtt/disconnect`,
-        { method: "POST" }
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            clientId,
+          }),
+        }
       );
 
       const result = await response.json();
       if (!result) {
+        setClientId(null);
         notify(
           toast.error("Disconnecting from MQTT broker", {
             position: "top-center",
@@ -101,6 +127,9 @@ export default function Home() {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
+            clientId,
+            host,
+            port,
             topic: publishTopic,
             message: publishMessage,
           }),
@@ -110,6 +139,19 @@ export default function Home() {
       if (response.ok) {
         notify(
           toast.success("Message published successfully", {
+            position: "top-center",
+            autoClose: 1500,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "light",
+          })
+        );
+      } else {
+        notify(
+          toast.error("Failed to publish message. Check your connection!!", {
             position: "top-center",
             autoClose: 1500,
             hideProgressBar: false,
