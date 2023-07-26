@@ -1,0 +1,93 @@
+/* styles/dashboard.module.css */
+.dashboard {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 40px;
+  padding: 20px 150px;
+}
+
+.card {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #a7cef6;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 20px;
+  font-size: 2.2rem;
+  height: 15rem;
+  text-align: center;
+  font-weight: bold;
+  text-decoration: none;
+}
+.card a {
+  text-decoration: none;
+}
+.card:hover {
+  background-color: #5190cf;
+  border: 1px solid #ccc;
+  font-weight: bold;
+}
+
+/* Media query for mobile devices */
+@media (max-width: 768px) {
+  .card {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #a7cef6;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 15px;
+    font-size: 2.1rem;
+    height: 15rem;
+    text-align: center;
+    font-weight: bold;
+    text-decoration: none;
+  }
+
+  .dashboard {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    padding: 20px 150px;
+  }
+  .dashboard {
+    padding: 30px;
+    grid-template-columns: repeat(
+      2,
+      1fr
+    ); /* Show two cards per row for mobile devices */
+  }
+}
+/* Media query for mobile devices */
+@media (max-width: 376px) {
+  .card {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #a7cef6;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 15px;
+    font-size: 1rem;
+    height: 8rem;
+    text-align: center;
+    font-weight: bold;
+    text-decoration: none;
+  }
+
+  .dashboard {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    padding: 20px 150px;
+  }
+  .dashboard {
+    padding: 30px;
+    grid-template-columns: repeat(
+      2,
+      1fr
+    ); /* Show two cards per row for mobile devices */
+  }
+}

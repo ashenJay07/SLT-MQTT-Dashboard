@@ -1,0 +1,93 @@
+.navFrame {
+  padding-bottom: 56px;
+}
+
+.cusNavBar {
+  padding-left: 10px !important;
+  background-color: #f5f5f5 !important;
+}
+
+.logo {
+  color: white !important;
+  padding: 7px 0;
+  width: 100px;
+  height: auto;
+}
+
+.menu {
+  margin-right: 5px;
+  width: 30px;
+  height: 35px;
+  outline: none;
+  border: none;
+}
+
+.navOption {
+  margin-top: 10px;
+}
+
+.userControl {
+  display: none !important;
+}
+
+.pcDash {
+  display: none;
+}
+
+.search_bar input {
+  background: '#d9d9d9';
+  margin: 15px 0;
+  border-radius: 2px;
+  outline: none;
+  border: none;
+  padding: 5px 10px;
+}
+
+/* Large devices (desktops, 992px and up) */
+@media (min-width: 992px) {
+  .cusNavBar {
+    padding-left: 50px !important;
+    padding-right: 55px !important;
+  }
+
+  .navFrame {
+    padding-bottom: 80px;
+  }
+
+  .logo {
+    color: white !important;
+    padding: 7px 0;
+    width: 100px;
+    height: auto;
+  }
+
+  .navOption {
+    margin-top: 0px;
+    margin-left: 30px;
+  }
+
+  .navLi {
+    display: none !important;
+  }
+
+  .userControl {
+    display: block !important;
+  }
+
+  .pcDash {
+    display: block;
+  }
+
+  .mobileDash {
+    display: none;
+  }
+
+  .search_bar input {
+    background: '#d9d9d9';
+    margin: 0 15px;
+    border-radius: 2px;
+    outline: none;
+    border: none;
+    padding: 5px 10px;
+  }
+}
