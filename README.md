@@ -1,1 +1,1 @@
-# SLT-MQTT-Dashboard
+# MQTT-Dashboard
